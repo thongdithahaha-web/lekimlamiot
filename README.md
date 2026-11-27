@@ -1,12 +1,12 @@
-# Trang Nạp Firmware ESP32 — Hydra ESP v1.1.4
+# lkimlamdev — ESP32 Web Flasher
 
-Trang Web Flasher nạp trực tiếp firmware **Hydra ESP v1.1.4** cho mạch **ESP32** qua trình duyệt Chrome / Microsoft Edge bằng **ESP Web Tools** (Web Serial / WebUSB).
+Trang web nạp firmware ESP32 qua trình duyệt (Web Serial / WebUSB).
 
-## Link trang nạp (GitHub Pages)
+## Đường dẫn
 - https://thongdithahaha-web.github.io/lekimlamiot/
 
-## Cấu trúc thư mục
-- `docs/index.html`: Giao diện trang nạp firmware ESP32.
+## Thành phần
+- `docs/index.html`: Giao diện trang nạp tối giản.
 - `docs/firmware/manifest.json`: Cấu hình nạp cho `esp-web-tools`.
 - `docs/firmware/bootloader.bin` (`0x1000`)
 - `docs/firmware/partition-table.bin` (`0x8000`)
