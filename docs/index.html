@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nạp Firmware ESP32 - Hydra ESP v1.1.4</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10.5.2/dist/web/install-button.js?module"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #0b1220;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #0ea5e9;
+      --primary-hover: #0284c7;
+      --accent: #10b981;
+      --warn-bg: rgba(245, 158, 11, 0.12);
+      --warn-border: rgba(245, 158, 11, 0.35);
+      --warn-text: #fbbf24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #172554 0%, var(--bg) 55%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 14px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 640px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.14);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .flash-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 18px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    esp-web-install-button {
+      --esp-tools-button-color: var(--primary);
+      --esp-tools-button-text-color: #ffffff;
+      display: inline-block;
+    }
+
+    .flash-btn {
+      background: linear-gradient(135deg, var(--primary), #2563eb);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 26px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(14, 165, 233, 0.3);
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    .flash-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .flash-btn:active {
+      transform: scale(0.97);
+    }
+
+    .unsupported-msg {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--warn-text);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .flash-hint {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .section-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 18px 0 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    code {
+      background: rgba(148, 163, 184, 0.14);
+      color: #7dd3fc;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+    }
+
+    a.dl {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a.dl:hover {
+      text-decoration: underline;
+    }
+
+    .steps {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.65;
+    }
+
+    .steps ol {
+      padding-left: 18px;
+    }
+
+    .steps li + li {
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="badge">ESP32 • Hydra ESP v1.1.4</div>
+    <h1>Trình Nạp Firmware ESP32 Trực Tiếp</h1>
+    <p class="subtitle">
+      Cắm mạch ESP32 vào cổng USB và nạp toàn bộ 4 phân vùng firmware trực tiếp từ trình duyệt <strong>Chrome</strong> hoặc <strong>Microsoft Edge</strong> (không cần cài thêm phần mềm).
+    </p>
+
+    <section class="flash-box">
+      <esp-web-install-button manifest="./firmware/manifest.json">
+        <button slot="activate" class="flash-btn">⚡ Kết nối &amp; Nạp Firmware ESP32</button>
+        <div slot="unsupported" class="unsupported-msg">
+          Trình duyệt hiện tại không hỗ trợ Web Serial / WebUSB. Vui lòng mở trang này bằng <strong>Google Chrome</strong> hoặc <strong>Microsoft Edge</strong> trên máy tính (hoặc Chrome trên Android qua cáp OTG).
+        </div>
+        <div slot="not-allowed" class="unsupported-msg">
+          Trang nạp cần chạy qua <strong>HTTPS</strong> hoặc <code>localhost</code> để trình duyệt cho phép truy cập cổng COM.
+        </div>
+      </esp-web-install-button>
+      <div class="flash-hint">
+        Chip mục tiêu: <code>ESP32</code> • Chế độ Flash: <code>DIO 80MHz</code> • Tùy chọn xóa sạch Flash (Erase) có sẵn trong hộp thoại cài đặt.
+      </div>
+    </section>
+
+    <div class="section-title">Hướng dẫn nhanh</div>
+    <div class="steps">
+      <ol>
+        <li>Cắm cáp USB dữ liệu từ máy tính vào mạch <strong>ESP32</strong> (cài driver <strong>CP210x</strong> hoặc <strong>CH340</strong> nếu máy chưa nhận cổng COM).</li>
+        <li>Nhấn nút <strong>⚡ Kết nối &amp; Nạp Firmware ESP32</strong> ở trên rồi chọn đúng cổng COM của ESP32.</li>
+        <li>Nếu dừng ở bước <code>Connecting...</code>, hãy <strong>nhấn giữ nút BOOT</strong> trên mạch ESP32 khoảng 2–3 giây cho đến khi quá trình nạp bắt đầu.</li>
+        <li>Sau khi hoàn tất 100%, bạn có thể bấm <strong>Logs &amp; Console</strong> để xem Serial log hoặc bấm nút <strong>EN / RST</strong> để khởi động lại mạch.</li>
+      </ol>
+    </div>
+
+    <div class="section-title">Chi tiết 4 phân vùng firmware</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Địa chỉ (Offset)</th>
+          <th>Phân vùng</th>
+          <th>File nhị phân</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>0x1000</code></td>
+          <td>Bootloader</td>
+          <td><a class="dl" href="./firmware/bootloader.bin" download>bootloader.bin</a></td>
+        </tr>
+        <tr>
+          <td><code>0x8000</code></td>
+          <td>Partition Table</td>
+          <td><a class="dl" href="./firmware/partition-table.bin" download>partition-table.bin</a></td>
+        </tr>
+        <tr>
+          <td><code>0x10000</code></td>
+          <td>App (factory)</td>
+          <td><a class="dl" href="./firmware/projecthydra-32.bin" download>projecthydra-32.bin</a></td>
+        </tr>
+        <tr>
+          <td><code>0x190000</code></td>
+          <td>Storage</td>
+          <td><a class="dl" href="./firmware/storage.bin" download>storage.bin</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    // Gỡ bỏ Service Worker và cache cũ nếu trình duyệt từng truy cập trang trước đó
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        for (const reg of regs) reg.unregister();
+      }).catch(() => {});
+    }
+    if ('caches' in window) {
+      caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))).catch(() => {});
+    }
+  </script>
+</body>
+</html>
